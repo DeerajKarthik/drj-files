@@ -1,0 +1,37 @@
+---
+import { sections, sectionKeys, type SectionKey } from '../config';
+import { href } from '../utils/paths';
+
+interface Props {
+  active: 'all' | SectionKey;
+  counts: Record<'all' | SectionKey, number>;
+  /** Enable instant client-side filtering (the /writing index). */
+  interactive?: boolean;
+}
+const { active, counts, interactive = false } = Astro.props;
+const items = [
+  { key: 'all' as const, label: 'All', href: '/writing' },
+  ...sectionKeys.map((key) => ({ key, label: sections[key].label, href: sections[key].href })),
+];
+---
+
+<nav class="filter" aria-label="Filter by section">
+  <span class="label filter-label trim">Filter:</span>
+  <ul>
+    {
+      items.map((item) => (
+        <li>
+          <a
+            class="cell"
+            href={href(item.href)}
+            data-filter={interactive ? item.key : undefined}
+            aria-current={item.key === active ? 'true' : undefined}
+          >
+            <span class="label trim">{item.label}</span>
+            <span class="count">{counts[item.key]}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

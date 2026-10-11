@@ -1,0 +1,14 @@
+---
+import { href } from '../utils/paths';
+import { slugify } from '../utils/slug';
+
+interface Props {
+  tag: string;
+  count?: number;
+}
+const { tag, count } = Astro.props;
+---
+
+<a class="tag-chip" href={href(`/tags/${slugify(tag)}`)}>
+  <span>{tag}</span>{count !== undefined && <span class="tag-count">{count}</span>}
+</a>

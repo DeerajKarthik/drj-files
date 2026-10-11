@@ -1,0 +1,16 @@
+---
+interface Props {
+  src: string;
+  title: string;
+  height?: number;
+}
+const { src, title, height = 360 } = Astro.props;
+---
+
+<figure class="demo">
+  <figcaption class="demo-head">
+    <span class="label trim">{title}</span>
+    <a class="link" href={src} target="_blank" rel="noopener">Open in new tab</a>
+  </figcaption>
+  <iframe src={src} title={title} loading="lazy" height={height} sandbox="allow-scripts allow-forms" referrerpolicy="no-referrer"></iframe>
+</figure>

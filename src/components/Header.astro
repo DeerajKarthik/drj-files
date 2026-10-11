@@ -1,0 +1,63 @@
+---
+import { config } from '../config';
+import { href, isActive } from '../utils/paths';
+import ThemeToggle from './ThemeToggle.astro';
+
+const current = Astro.url.pathname;
+const items = [
+  ...config.nav,
+  { label: 'About', href: '/about' },
+];
+const aria = (target: string): 'page' | undefined => (isActive(current, target) ? 'page' : undefined);
+---
+
+<header class="site-header" data-site-header transition:persist="site-header">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav class="header-bar" aria-label="Primary">
+    <a class="cell brand" href={href('/')} aria-current={current === href('/') ? 'page' : undefined}>
+      <span class="label brand-name trim">{config.siteName}</span>
+    </a>
+
+    <ul class="header-links" id="site-menu" data-menu-panel>
+      {
+        items.map((item) => (
+          <li>
+            <a class="cell" href={href(item.href)} data-nav-link aria-current={aria(item.href)}>
+              {item.label === 'About' && (
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+                  <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M8 7v4.5M8 4.5v1.2" fill="none" stroke="currentColor" stroke-width="1.75" />
+                </svg>
+              )}
+              <span class="label trim">{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a class="cell" href={href('/rss.xml')} data-nav-link>
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+            <circle cx="3" cy="13" r="1.6" fill="currentColor" />
+            <path d="M2 7.5a6.5 6.5 0 0 1 6.5 6.5M2 2.5A11.5 11.5 0 0 1 13.5 14" fill="none" stroke="currentColor" stroke-width="1.6" />
+          </svg>
+          <span class="label trim">RSS</span>
+        </a>
+      </li>
+    </ul>
+
+    <ThemeToggle />
+
+    <button
+      class="cell cell-btn menu-toggle js-only"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      data-menu-toggle
+    >
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+        <path d="M1.5 4h13M1.5 8h13M1.5 12h13" stroke="currentColor" stroke-width="1.75" fill="none" />
+      </svg>
+      <span class="label trim">Menu</span>
+    </button>
+  </nav>
+</header>

@@ -1,0 +1,45 @@
+---
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+interface Props {
+  headings: Heading[];
+}
+const items = Astro.props.headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  items.length > 0 && (
+    <>
+      <aside class="toc-rail" data-toc-rail aria-label="Contents">
+        <p class="label toc-label trim">Contents</p>
+        <div class="toc-scroll" data-toc-scroll>
+          <span class="toc-marker" data-toc-marker aria-hidden="true" />
+          <ol class="toc-list">
+            {items.map((h) => (
+              <li class={h.depth === 3 ? 'toc-sub' : undefined}>
+                <a href={`#${h.slug}`} data-toc-link>{h.text}</a>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </aside>
+      <details class="toc-mobile">
+        <summary class="label">On this page</summary>
+        <ol class="toc-list">
+          {items.map((h) => (
+            <li class={h.depth === 3 ? 'toc-sub' : undefined}>
+              <a href={`#${h.slug}`} data-toc-link>{h.text}</a>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </>
+  )
+}
+
+<script>
+  import '../scripts/toc';
+</script>

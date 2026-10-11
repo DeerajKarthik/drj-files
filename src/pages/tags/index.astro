@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import { collectTags, getPosts } from '../../utils/posts';
+import { href } from '../../utils/paths';
+
+const tags = collectTags(await getPosts());
+const max = Math.max(1, ...tags.map((t) => t.count));
+const step = (count: number): number => Math.min(3, Math.floor((count / max) * 3.999));
+---
+
+<BaseLayout title="Tags" description="Browse all posts by topic.">
+  <PageHeading eyebrow="Index" title="Tags" lede="Topics across research and creative work." />
+  <ul class="tag-grid">
+    {
+      tags.map((t) => (
+        <li class={`tag-cell size-${step(t.count)}`}>
+          <a href={href(`/tags/${t.slug}`)}>
+            <span class="tag-name">{t.tag}</span>
+            <span class="tag-num tag">{t.count} {t.count === 1 ? 'POST' : 'POSTS'}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

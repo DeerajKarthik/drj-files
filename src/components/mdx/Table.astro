@@ -1,0 +1,8 @@
+---
+// Wraps Markdown tables so wide ones scroll instead of breaking the layout.
+const props = Astro.props as Record<string, unknown>;
+---
+
+<div class="table-wrap" tabindex="0" role="region" aria-label="Table">
+  <table {...props}><slot /></table>
+</div>

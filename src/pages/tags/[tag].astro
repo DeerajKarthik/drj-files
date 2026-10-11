@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import PostList from '../../components/PostList.astro';
+import { collectTags, getPosts, postsWithTag } from '../../utils/posts';
+import { href } from '../../utils/paths';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return collectTags(posts).map((t) => ({
+    params: { tag: t.slug },
+    props: { tag: t.tag, posts: postsWithTag(posts, t.slug) },
+  }));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<BaseLayout title={`Tagged: ${tag}`} description={`Posts tagged ${tag}.`}>
+  <PageHeading eyebrow="Tag" title={tag} lede={`${posts.length} ${posts.length === 1 ? 'post' : 'posts'} tagged “${tag}”.`} />
+  <p class="back-link"><a class="link" href={href('/tags')}>← All tags</a></p>
+  <PostList posts={posts} />
+</BaseLayout>

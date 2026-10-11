@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Design tokens. Default theme is "paper"; "night" inverts it.
+   Colour pairs are checked against WCAG AA (4.5:1 text, 3:1 UI).
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* Paper */
+  --paper: hsl(42 42% 78%);
+  --paper-edge: hsl(40 48% 62%);
+  --paper-raised: hsl(44 45% 84%);
+  --paper-sunken: hsl(40 36% 70%);
+  --header-bg: hsl(38 46% 64%);
+
+  --ink: hsl(30 12% 9%);
+  --ink-muted: hsl(30 12% 18%);
+  --ink-faint: hsl(30 10% 25%);
+  --rule: hsl(30 14% 14%);
+  --rule-soft: hsl(30 14% 14% / 0.35);
+
+  --ribbon-bg: hsl(0 0% 10%);
+  --ribbon-text: hsl(42 38% 82%);
+  --ribbon-muted: hsl(42 15% 64%);
+
+  --accent: hsl(18 66% 31%);
+  --accent-bright: hsl(28 92% 52%);
+  --selection: hsl(28 92% 52% / 0.35);
+
+  /* Frame (the dark surround) */
+  --frame-bg: hsl(200 12% 14%);
+  --frame-pattern: hsl(0 0% 100% / 0.03);
+  --frame-gap: 10px;
+
+  /* Grain strength differs per theme */
+  --grain-opacity: 0.08;
+  --fibre-opacity: 0.02;
+  --vignette-edge: var(--paper-edge);
+  --sheet-shadow: hsl(35 40% 30% / 0.25);
+
+  /* Illustration fill hides lines behind solid shapes */
+  --illus-fill: var(--paper-raised);
+
+  /* Type */
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-serif: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  /* Body copy font. Switch the next line to var(--font-serif) for a serif reading face. */
+  --font-body: var(--font-mono);
+
+  --step-body: clamp(0.9375rem, 0.9rem + 0.25vw, 1.0625rem);
+  --step-label: 0.8125rem;
+  --step-tag: 0.75rem;
+  --step-title: clamp(1.75rem, 1.2rem + 2.2vw, 2.5rem);
+  --measure: 72ch;
+
+  /* Rules and spacing */
+  --bw: 1px;
+  --bw-strong: 1.5px;
+  --cell-pad: clamp(0.75rem, 0.5rem + 1vw, 1.25rem);
+  --touch: 44px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Noise tile: tiny inline SVG, black grain with its own alpha. */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+:root[data-theme='night'] {
+  color-scheme: dark;
+
+  --paper: hsl(0 0% 11%);
+  --paper-edge: hsl(30 8% 8%);
+  --paper-raised: hsl(0 0% 15%);
+  --paper-sunken: hsl(0 0% 8%);
+  --header-bg: hsl(30 10% 15%);
+
+  --ink: hsl(42 30% 86%);
+  --ink-muted: hsl(42 12% 72%);
+  --ink-faint: hsl(42 8% 62%);
+  --rule: hsl(42 12% 36%);
+  --rule-soft: hsl(42 12% 36% / 0.55);
+
+  --ribbon-bg: hsl(42 38% 80%);
+  --ribbon-text: hsl(0 0% 10%);
+  --ribbon-muted: hsl(30 10% 26%);
+
+  --accent: hsl(32 92% 58%);
+  --accent-bright: hsl(32 95% 56%);
+  --selection: hsl(32 95% 56% / 0.4);
+
+  --frame-bg: hsl(200 8% 7%);
+  --frame-pattern: hsl(0 0% 100% / 0.025);
+
+  /* Night keeps the grain, quieter, and drops the warm colour shift. */
+  --grain-opacity: 0.05;
+  --fibre-opacity: 0.015;
+  --sheet-shadow: hsl(0 0% 0% / 0.5);
+  --illus-fill: var(--paper-raised);
+}
+
+/* Stronger rules and text for readers who ask for more contrast. */
+@media (prefers-contrast: more) {
+  :root {
+    --rule: var(--ink);
+    --rule-soft: var(--ink-muted);
+    --ink-muted: var(--ink);
+    --ink-faint: var(--ink);
+    --bw: 1.5px;
+    --bw-strong: 2px;
+    --grain-opacity: 0;
+    --fibre-opacity: 0;
+  }
+}

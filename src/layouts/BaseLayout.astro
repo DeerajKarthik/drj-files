@@ -1,0 +1,58 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+import '../styles/prose.css';
+import BaseHead from '../components/BaseHead.astro';
+import Sheet from '../components/Sheet.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { config } from '../config';
+import { absoluteUrl } from '../utils/paths';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  published?: Date;
+  updated?: Date;
+  canonicalUrl?: string;
+  jsonLd?: Record<string, unknown>[];
+  math?: boolean;
+  noindex?: boolean;
+  /** Drives page-specific chrome (header auto-hide on posts). */
+  page?: 'home' | 'page' | 'post';
+}
+
+const { page = 'page', jsonLd = [], ...head } = Astro.props;
+const webSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: config.siteName,
+  description: config.description,
+  url: absoluteUrl('/'),
+  inLanguage: config.locale,
+  author: { '@type': 'Person', name: config.author },
+};
+---
+
+<!doctype html>
+<html lang={config.locale} class="no-js">
+  <head>
+    <BaseHead jsonLd={page === 'home' ? [webSite, ...jsonLd] : jsonLd} {...head} />
+  </head>
+  <body data-page={page}>
+    <Sheet>
+      <Header />
+      <main id="main" tabindex="-1">
+        <slot />
+      </main>
+      <Footer />
+    </Sheet>
+    <script>
+      import '../scripts/theme';
+      import '../scripts/header';
+    </script>
+  </body>
+</html>

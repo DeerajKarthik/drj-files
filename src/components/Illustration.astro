@@ -1,0 +1,50 @@
+---
+import { drawMotif, motifs, nextId, sectionMotifs, type Motif } from '../utils/illustrations';
+import { hash } from '../utils/slug';
+import { href } from '../utils/paths';
+import type { SectionKey } from '../config';
+
+interface Props {
+  /** Explicit motif; otherwise derived from section + seed. */
+  motif?: Motif;
+  section?: SectionKey;
+  seed?: string;
+  /** Raster/vector cover and its annotated alternate (paths under /public). */
+  cover?: string;
+  coverHover?: string;
+  alt?: string;
+  eager?: boolean;
+}
+
+const { motif, section, seed = '', cover, coverHover, alt, eager = false } = Astro.props;
+
+const pool = section ? sectionMotifs[section] : motifs;
+const chosen: Motif = motif ?? (pool[hash(seed) % pool.length] as Motif);
+const id = nextId('illus');
+const drawing = cover ? undefined : drawMotif(chosen, id);
+const src = (p: string): string => (p.startsWith('/') ? href(p) : p);
+---
+
+<span class="illus" data-motif={cover ? 'cover' : chosen}>
+  {
+    drawing ? (
+      <svg
+        viewBox="0 0 200 200"
+        width="200"
+        height="200"
+        role={alt ? 'img' : undefined}
+        aria-label={alt}
+        aria-hidden={alt ? undefined : 'true'}
+        focusable="false"
+      >
+        <g class="ink" set:html={drawing.ink} />
+        <g class="annot" set:html={drawing.annot} />
+      </svg>
+    ) : (
+      <>
+        <img class="ink" src={src(cover as string)} alt={alt ?? ''} width="200" height="200" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+        {coverHover && <img class="annot" src={src(coverHover)} alt="" aria-hidden="true" width="200" height="200" loading="lazy" decoding="async" />}
+      </>
+    )
+  }
+</span>

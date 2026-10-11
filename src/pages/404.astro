@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TornCard from '../components/TornCard.astro';
+import { href } from '../utils/paths';
+import { config } from '../config';
+---
+
+<BaseLayout title="Not found" description="This page could not be found." noindex>
+  <section class="not-found">
+    <div class="not-found-art"><TornCard /></div>
+    <div class="not-found-copy">
+      <p class="label trim">Error 404</p>
+      <h1 class="page-title trim">Misfiled.</h1>
+      <p class="page-lede">
+        This index card was here a moment ago. Either it was never written, it has been renamed, or the
+        librarian (that is, me) put it in the wrong drawer.
+      </p>
+      <ul class="plain not-found-links">
+        <li><a class="link" href={href('/')}>← Back to {config.siteName}</a></li>
+        <li><a class="link" href={href('/writing')}>Browse all writing</a></li>
+        <li><a class="link" href={href('/tags')}>Browse by tag</a></li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>

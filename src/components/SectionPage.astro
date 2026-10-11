@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from './PageHeading.astro';
+import SectionFilter from './SectionFilter.astro';
+import PostList from './PostList.astro';
+import { sections, sectionKeys, type SectionKey } from '../config';
+import { getPosts, postsInSection } from '../utils/posts';
+
+interface Props {
+  section: SectionKey;
+}
+const { section } = Astro.props;
+const posts = await getPosts();
+const mine = postsInSection(posts, section);
+const counts = {
+  all: posts.length,
+  ...Object.fromEntries(sectionKeys.map((k) => [k, postsInSection(posts, k).length])),
+} as Record<'all' | SectionKey, number>;
+const meta = sections[section];
+---
+
+<BaseLayout title={meta.label} description={meta.blurb}>
+  <PageHeading eyebrow="Section" title={meta.label} lede={meta.blurb} />
+  <SectionFilter active={section} counts={counts} />
+  <PostList posts={mine} emptyMessage={`No ${meta.label.toLowerCase()} yet.`} />
+</BaseLayout>

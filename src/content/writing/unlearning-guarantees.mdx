@@ -1,0 +1,87 @@
+---
+title: What a certificate of forgetting actually certifies
+description: Notes on (ε, δ)-certified removal, the Newton-step update behind it, and what the guarantee does and does not say about a deployed model.
+section: research
+tags: [machine unlearning, privacy, optimisation]
+pubDate: 2026-09-14
+updatedDate: 2026-10-02
+featured: false
+math: true
+motif: cubes
+---
+
+*Sample post: the maths below is a faithful sketch, but treat the numbers as illustrative.*
+
+Machine unlearning asks a deceptively simple question: after a model has been trained on a dataset $D$, how do we remove the influence of one example $z$ without paying for a full retrain? The interesting part is not the removal. It is deciding what it means to say the removal *worked*.
+
+## The definition
+
+Let $\mathcal{A}$ be a learning algorithm and $\mathcal{M}$ a removal mechanism. Write $D' = D \setminus \{z\}$. We say $\mathcal{M}$ performs **$(\varepsilon, \delta)$-certified removal** if, for every measurable set of models $\mathcal{T}$,
+
+$$
+\Pr\big[\mathcal{M}(\mathcal{A}(D), D, z) \in \mathcal{T}\big] \;\le\; e^{\varepsilon}\,\Pr\big[\mathcal{A}(D') \in \mathcal{T}\big] + \delta,
+$$
+
+and symmetrically with the two probabilities swapped. This borrows its shape from differential privacy, but notice the asymmetry: the reference distribution is *retraining from scratch*, not a neighbouring dataset in the abstract.[^1]
+
+The practical reading is a hypothesis test. An adversary who sees the final weights should not be able to tell, with advantage larger than $\varepsilon$ and $\delta$ allow, whether $z$ was ever in the training set.
+
+## A one-step removal for convex losses
+
+For an $L_2$-regularised, strongly convex objective, a single Newton step gives a closed-form correction. If $\theta^\star$ minimises the loss on $D$ and $H$ is the Hessian of the loss over $D'$ at $\theta^\star$, then
+
+$$
+\theta^{-} = \theta^\star + H^{-1}\,\nabla \ell(\theta^\star; z).
+$$
+
+The residual gradient norm $\lVert \nabla L(\theta^{-}; D') \rVert$ is bounded by a term that shrinks like $O(1/n^2)$ under smoothness assumptions, so for large datasets the approximation is excellent. Adding calibrated Gaussian noise to the training objective then converts that small residual into a formal $(\varepsilon, \delta)$ statement.
+
+```python title="newton_removal.py"
+import numpy as np
+
+def remove_example(theta, X, y, i, lam):
+    """One Newton step that removes example i from a ridge-regularised logistic model."""
+    n, d = X.shape
+    keep = np.arange(n) != i
+    Xk, yk = X[keep], y[keep]
+
+    p = 1.0 / (1.0 + np.exp(-Xk @ theta))
+    H = (Xk.T * (p * (1 - p))) @ Xk + lam * (n - 1) * np.eye(d)
+
+    pi = 1.0 / (1.0 + np.exp(-X[i] @ theta))
+    grad_i = (pi - y[i]) * X[i]          # gradient of the removed example's loss
+    return theta + np.linalg.solve(H, grad_i)
+```
+
+The cost is one Hessian solve, $O(d^3)$, independent of $n$ once $H$ is cached. Retraining is $O(nd \cdot \text{iterations})$.
+
+## What it does not certify
+
+The guarantee is about the *weights*. It says nothing about everything downstream of them. A short, deliberately incomplete list:
+
+| Artefact | Covered by the certificate? | Why |
+|---|---|---|
+| Final weights $\theta^{-}$ | Yes | This is what the definition constrains |
+| Logged training gradients | No | Not part of $\mathcal{M}$'s output |
+| Embeddings cached in a vector store | No | Computed from weights *before* removal |
+| Outputs already served to users | No | History cannot be edited |
+| Fine-tuned descendants | No | They inherit the old weights |
+
+<Callout type="warning" title="Scope of the claim">
+A certificate is a statement about one mechanism and one threat model. If your pipeline keeps copies of the data anywhere, the certificate does not travel with them.
+</Callout>
+
+## Where this leaves deep networks
+
+Everything above leans on convexity. For deep networks the Hessian is indefinite and the residual bound is unavailable, so published methods fall back to empirical audits: membership-inference tests, or comparing against retrained models over many seeds. Those are useful, but they estimate *risk*; they do not certify it.[^2]
+
+<Aside>An audit that fails to find leakage is weak evidence. A certificate that holds is a theorem. Keep the two vocabularies apart.</Aside>
+
+## Open questions
+
+1. Can the residual bound be restored for overparameterised models near initialisation, where training behaves almost linearly?
+2. How should a certificate compose when removal requests arrive sequentially and each uses a noisy update?
+3. What is the right reference distribution when the "retrained" model would itself depend on random data order?
+
+[^1]: The reference distribution being *retraining* is the key design choice. It makes the guarantee operational: the regulator's mental model is "as if you had never seen it".
+[^2]: Reporting an empirical audit alongside a certificate on the convex part of a pipeline is, in my view, the honest middle ground.

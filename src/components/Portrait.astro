@@ -1,0 +1,26 @@
+---
+// Placeholder portrait: replace with a real image in about.astro.
+let hatch = '';
+for (let x = -300; x < 240; x += 7) hatch += `M${x} 300L${x + 300} 0`;
+---
+
+<svg class="portrait" viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Portrait placeholder">
+  <defs>
+    <clipPath id="portrait-clip"><rect x="8" y="8" width="224" height="284" /></clipPath>
+  </defs>
+  <g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+    <g clip-path="url(#portrait-clip)">
+      <path d={hatch} stroke-width="0.5" opacity="0.35" />
+      <ellipse class="fillshape" cx="120" cy="122" rx="48" ry="58" />
+      <path d="M90 100c10-18 50-22 62 4" stroke-width="0.8" />
+      <path d="M86 112c10 3 20 0 24 0M134 112c4 0 14 3 22 0" stroke-width="0.9" />
+      <path d="M120 120v18l-6 4" stroke-width="0.9" />
+      <path d="M104 150c10 6 22 6 32 0" stroke-width="0.9" />
+      <path class="fillshape" d="M98 172v26c-44 8-76 28-80 102h204c-4-74-36-94-80-102v-26" />
+      <path d="M98 198c8 14 36 14 44 0" />
+      <path d="M100 210l-16 70M140 210l16 70" stroke-width="0.8" />
+    </g>
+    <rect x="8" y="8" width="224" height="284" stroke-width="1.5" />
+    <path d="M8 24h16M8 276h16M216 24h16M216 276h16M24 8v16M216 8v16M24 276v16M216 276v16" stroke-width="1" />
+  </g>
+</svg>

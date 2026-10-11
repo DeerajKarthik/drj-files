@@ -1,0 +1,38 @@
+---
+import { config, sections } from '../config';
+import { href } from '../utils/paths';
+import Emblem from './Emblem.astro';
+
+const year = new Date().getFullYear();
+const read = [
+  ...Object.values(sections).map((s) => ({ label: s.label, href: s.href })),
+  { label: 'Tags', href: '/tags' },
+  { label: 'RSS', href: '/rss.xml' },
+];
+const elsewhere = [...config.socials, { label: 'Email', href: `mailto:${config.email}` }];
+---
+
+<footer class="site-footer">
+  <div class="footer-row">
+    <div class="cell footer-brand">
+      <Emblem size={28} simple />
+      <p class="footer-id">
+        <strong class="label">{config.siteName}</strong>
+        <span class="tag">{config.tagline} © {year}</span>
+      </p>
+    </div>
+    <nav class="cell footer-links" aria-label="Read">
+      <span class="label">Read:</span>
+      <ul>
+        {read.map((l) => <li><a class="link no-arrow" href={href(l.href)}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <nav class="cell footer-links" aria-label="Elsewhere">
+      <span class="label">Elsewhere:</span>
+      <ul>
+        {elsewhere.map((l) => <li><a class="link" href={l.href} rel="me noopener">{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <a class="cell footer-top" href="#sheet" data-scroll-top><span class="label">Top ↑</span></a>
+  </div>
+</footer>

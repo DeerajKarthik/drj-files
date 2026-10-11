@@ -1,0 +1,14 @@
+---
+import PostCard from './PostCard.astro';
+import type { Post } from '../utils/posts';
+
+interface Props {
+  posts: Post[];
+  label?: string;
+}
+const { posts, label = 'Posts' } = Astro.props;
+---
+
+<ul class="card-grid" aria-label={label}>
+  {posts.map((post, i) => <PostCard post={post} eager={i < 4} />)}
+</ul>

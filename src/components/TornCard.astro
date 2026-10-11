@@ -1,0 +1,27 @@
+---
+// 404 illustration: a torn index card with a coffee ring.
+let jag = '';
+let y = 8;
+let i = 0;
+while (y < 192) {
+  const dx = [0, -8, 4, -12, 2, -6][i % 6] as number;
+  jag += `L${248 + dx} ${y}`;
+  y += 10 + (i % 3) * 3;
+  i++;
+}
+let rules = '';
+for (let k = 0; k < 7; k++) rules += `M16 ${70 + k * 18}H${236 - (k % 3) * 18}`;
+---
+
+<svg class="torn-card" viewBox="0 0 280 210" width="280" height="210" role="img" aria-label="A torn, misfiled index card">
+  <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" transform="rotate(-3 140 105)">
+    <path class="fillshape" d={`M16 8H248${jag}L248 192H16Z`} />
+    <path d="M16 46H248" stroke="var(--accent-bright)" />
+    <path d={rules} stroke-width="0.7" opacity="0.6" />
+    <text x="26" y="35" class="card-text" fill="currentColor" stroke="none">FILED UNDER: ???</text>
+    <text x="40" y="160" class="card-big" fill="currentColor" stroke="none">404</text>
+    <circle cx="190" cy="140" r="26" stroke-width="2.5" opacity="0.45" stroke="var(--accent)" />
+    <circle cx="190" cy="140" r="23" stroke-width="0.8" opacity="0.5" stroke="var(--accent)" />
+    <path d="M232 192l-6 14M240 192l2 12" stroke-width="1" />
+  </g>
+</svg>

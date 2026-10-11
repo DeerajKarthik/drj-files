@@ -1,0 +1,24 @@
+---
+import { postHref, sectionTag, type Post } from '../utils/posts';
+
+interface Props {
+  posts: Post[];
+}
+const { posts } = Astro.props;
+---
+
+<section class="ribbon" aria-label="Latest posts">
+  <h2 class="label ribbon-label trim">Latest:</h2>
+  <ul class="ribbon-list">
+    {
+      posts.slice(0, 3).map((post) => (
+        <li>
+          <a href={postHref(post)}>
+            <span class="ribbon-title">{post.data.title}</span>
+            <span class="ribbon-tag">{sectionTag(post)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</section>

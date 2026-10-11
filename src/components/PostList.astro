@@ -1,0 +1,40 @@
+---
+import { sections } from '../config';
+import { formatDate, groupByYear, isoDate, postHref, postMinutes, sectionTag, type Post } from '../utils/posts';
+import TagChip from './TagChip.astro';
+
+interface Props {
+  posts: Post[];
+  /** Mark rows so the section filter script can hide them. */
+  filterable?: boolean;
+  emptyMessage?: string;
+}
+const { posts, filterable = false, emptyMessage = 'Nothing filed here yet.' } = Astro.props;
+const groups = groupByYear(posts);
+---
+
+<div class="post-list" data-filter-root={filterable ? '' : undefined}>
+  {
+    groups.map(({ year, posts: list }) => (
+      <section class="year-group" data-year-group aria-label={`Posts from ${year}`}>
+        <h2 class="year label trim">{year}</h2>
+        <ul class="rows">
+          {list.map((post) => (
+            <li class="row" data-section={post.data.section}>
+              <time class="row-date tag" datetime={isoDate(post.data.pubDate)}>{formatDate(post.data.pubDate)}</time>
+              <a class="row-title" href={postHref(post)}>{post.data.title}</a>
+              <span class="row-section tag" aria-label={`Section: ${sections[post.data.section].label}`}>{sectionTag(post)}</span>
+              <span class="row-tags">
+                {post.data.tags.map((tag) => <TagChip tag={tag} />)}
+              </span>
+              <span class="row-time tag">{postMinutes(post)} MIN</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+  <p class="empty" data-filter-empty hidden={posts.length > 0 ? true : undefined}>{emptyMessage}</p>
+</div>
+
+{filterable && <script>import '../scripts/filter';</script>}

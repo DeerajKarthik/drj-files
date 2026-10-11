@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Portrait from '../components/Portrait.astro';
+import { config } from '../config';
+import { href } from '../utils/paths';
+
+const interests = [
+  'Certified machine unlearning',
+  'Federated fairness',
+  'Adversarial robustness',
+  'Multilingual NLP',
+  'AI-generated text detection',
+];
+const contact = [...config.socials, { label: 'Email', href: `mailto:${config.email}` }];
+---
+
+<BaseLayout title="About" description="About S K Deeraj: B.Tech AI student, ML researcher and print designer.">
+  <PageHeading eyebrow="Dossier" title="About" lede="Who writes here, and what for." />
+
+  <div class="about-grid">
+    <aside class="about-side" aria-label="Portrait and contact">
+      <div class="portrait-cell"><Portrait /></div>
+      <div class="about-box">
+        <h2 class="label trim">Contact</h2>
+        <ul class="plain">
+          {contact.map((l) => <li><a class="link" href={l.href} rel="me noopener">{l.label}</a></li>)}
+        </ul>
+      </div>
+    </aside>
+
+    <div class="about-main prose">
+      <!-- replace -->
+      <p>
+        I am S K Deeraj, a B.Tech student in artificial intelligence, an ML researcher and a print and editorial designer.
+        My research sits where AI safety meets multilinguality: how to make models that forget on request, treat
+        every language fairly and stay honest under pressure. I also lay out books, posters and the occasional
+        typeface specimen, and I think the two crafts have more in common than either admits: both are about
+        constraints made visible. This notebook is where the technical and the creative live side by side: paper notes and
+        experiments next to essays, poems and stories.
+      </p>
+
+      <h2>Currently</h2>
+      <p>
+        {config.strip.text}.
+        {config.strip.href && <a href={href(config.strip.href)}>Read the working notes</a>}
+      </p>
+
+      <h2>Research interests</h2>
+      <ul>
+        {interests.map((i) => <li>{i}</li>)}
+      </ul>
+
+      <h2>Colophon</h2>
+      <p>Built with Astro. Set in IBM Plex Mono. Drawn, as far as possible, by hand and by script.</p>
+    </div>
+  </div>
+</BaseLayout>

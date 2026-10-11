@@ -1,0 +1,10 @@
+---
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
+---
+
+<div class="verse" role="group" aria-label={title ?? 'Poem'}>
+  <slot />
+</div>

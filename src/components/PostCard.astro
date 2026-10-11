@@ -1,0 +1,23 @@
+---
+import Illustration from './Illustration.astro';
+import { formatDate, isoDate, postHref, sectionTag, type Post } from '../utils/posts';
+
+interface Props {
+  post: Post;
+  eager?: boolean;
+}
+const { post, eager = false } = Astro.props;
+const { title, description, pubDate, section, motif, cover, coverHover, coverAlt } = post.data;
+---
+
+<li class="card">
+  <a class="card-link" href={postHref(post)}>
+    <Illustration motif={motif} section={section} seed={post.id} cover={cover} coverHover={coverHover} alt={coverAlt} eager={eager} />
+    <h3 class="card-title trim">{title}</h3>
+    <p class="card-excerpt">{description}</p>
+    <p class="card-meta">
+      <span class="tag">{sectionTag(post)}</span>
+      <time class="tag" datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
+    </p>
+  </a>
+</li>

@@ -1,0 +1,28 @@
+---
+import { href } from '../utils/paths';
+
+interface Crumb {
+  label: string;
+  path?: string;
+}
+interface Props {
+  items: Crumb[];
+}
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    {
+      items.map((item, i) => (
+        <li>
+          {item.path && i < items.length - 1 ? (
+            <a class="label trim" href={href(item.path)}>{item.label}</a>
+          ) : (
+            <span class="label trim" aria-current="page">{item.label}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

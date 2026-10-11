@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import SectionFilter from '../../components/SectionFilter.astro';
+import PostList from '../../components/PostList.astro';
+import { sectionKeys, type SectionKey } from '../../config';
+import { getPosts, postsInSection } from '../../utils/posts';
+
+const posts = await getPosts();
+const counts = {
+  all: posts.length,
+  ...Object.fromEntries(sectionKeys.map((k) => [k, postsInSection(posts, k).length])),
+} as Record<'all' | SectionKey, number>;
+---
+
+<BaseLayout title="Writing" description="Every post, newest first: research notes and creative pieces.">
+    <PageHeading eyebrow="Archive" title="Writing" lede="Everything in date order. Filter by section." />
+    <SectionFilter active="all" counts={counts} interactive />
+    <PostList posts={posts} filterable />
+
+</BaseLayout>

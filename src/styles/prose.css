@@ -1,0 +1,545 @@
+/* ==========================================================================
+   Prose: long-form reading styles for posts and the About page.
+   ========================================================================== */
+
+.prose {
+  font-family: var(--font-body);
+  font-size: var(--step-body);
+  line-height: 1.75;
+  max-inline-size: var(--measure);
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+/* Blocks inside prose must sit above the fixed vignette; they are transparent so grain shows through. */
+.prose > * + * {
+  margin-block-start: 1.25em;
+}
+
+.prose :is(h1, h2, h3, h4) {
+  font-family: var(--font-mono);
+  line-height: 1.25;
+  scroll-margin-block-start: 5.5rem;
+  position: relative;
+  text-wrap: balance;
+}
+
+.prose h2 {
+  margin-block-start: 2.6em;
+  padding-block-start: 0.9em;
+  border-block-start: var(--bw) solid var(--rule);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.prose h2 + * {
+  margin-block-start: 1em;
+}
+
+.prose h3 {
+  margin-block-start: 2em;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.prose h4 {
+  margin-block-start: 1.6em;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Heading anchors: real links appended by rehype-autolink-headings, revealed on hover/focus. */
+.heading-anchor {
+  margin-inline-start: 0.5em;
+  color: var(--ink-faint);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+}
+
+.prose :is(h2, h3, h4):hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.heading-anchor:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+@media (hover: none) {
+  .heading-anchor {
+    opacity: 0.6;
+  }
+}
+
+/* ---------- Lists ---------- */
+
+.prose ul {
+  padding-inline-start: 1.5em;
+}
+
+.prose ul > li {
+  position: relative;
+}
+
+.prose ul > li::before {
+  content: '▪';
+  position: absolute;
+  inset-inline-start: -1.25em;
+  color: var(--ink);
+  font-size: 0.85em;
+}
+
+.prose ol {
+  padding-inline-start: 2em;
+  counter-reset: item;
+}
+
+.prose ol > li {
+  position: relative;
+  counter-increment: item;
+}
+
+.prose ol > li::before {
+  content: counter(item, decimal-leading-zero) '.';
+  position: absolute;
+  inset-inline-start: -2.25em;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-weight: 700;
+}
+
+.prose li + li {
+  margin-block-start: 0.35em;
+}
+
+.prose li > :is(ul, ol) {
+  margin-block-start: 0.35em;
+}
+
+/* ---------- Blockquote, hr, inline ---------- */
+
+.prose blockquote {
+  margin-inline: 0;
+  padding-inline-start: 1.25em;
+  border-inline-start: 3px solid var(--ink);
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+.prose blockquote > * + * {
+  margin-block-start: 0.75em;
+}
+
+.prose hr {
+  border: 0;
+  margin-block: 2.5em;
+  text-align: center;
+  line-height: 1;
+}
+
+.prose hr::before {
+  content: '▪ ▪ ▪';
+  letter-spacing: 0.6em;
+  padding-inline-start: 0.6em;
+  font-size: 0.9em;
+}
+
+.prose strong {
+  font-weight: 700;
+}
+
+.prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  background: var(--paper-sunken);
+  border: 1px solid var(--rule-soft);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.prose kbd {
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--rule);
+  border-block-end-width: 2px;
+  background: var(--paper-raised);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.prose mark {
+  background: var(--selection);
+  color: inherit;
+}
+
+.prose img {
+  block-size: auto;
+}
+
+/* ---------- Tables ---------- */
+
+.prose table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border: var(--bw) solid var(--rule);
+}
+
+.prose :is(th, td) {
+  padding: 0.55em 0.8em;
+  border: var(--bw) solid var(--rule);
+  text-align: start;
+  vertical-align: top;
+}
+
+.prose th {
+  background: var(--header-bg);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--paper-sunken) 35%, transparent);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+/* ---------- Figures ---------- */
+
+.figure {
+  margin: 0;
+}
+
+.figure-frame {
+  border: var(--bw) solid var(--rule);
+  background: var(--paper-raised);
+  padding: 0.75rem;
+  display: grid;
+  place-items: center;
+}
+
+.figure-frame img {
+  inline-size: 100%;
+  block-size: auto;
+}
+
+.figure-frame .illus {
+  max-inline-size: 240px;
+}
+
+.figure figcaption {
+  margin-block-start: 0.6rem;
+  line-height: 1.5;
+}
+
+/* ---------- Callouts ---------- */
+
+.admonition {
+  border: var(--bw-strong) solid var(--rule);
+  background: color-mix(in srgb, var(--paper-raised) 70%, transparent);
+}
+
+.admonition-label {
+  display: block;
+  padding: 0.55rem 0.9rem;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.admonition-warning .admonition-label {
+  background: var(--accent);
+  color: var(--paper-raised);
+}
+
+:root[data-theme='night'] .admonition-warning .admonition-label {
+  color: hsl(0 0% 8%);
+}
+
+.admonition-idea {
+  border-style: dashed;
+}
+
+.admonition-idea .admonition-label {
+  background: var(--paper-sunken);
+  color: var(--ink);
+  border-block-end: 1px dashed var(--rule);
+}
+
+.admonition-body {
+  padding: 0.85rem 1rem;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
+.admonition-body > * + * {
+  margin-block-start: 0.75em;
+}
+
+/* ---------- Pull quote, section break, margin notes ---------- */
+
+.pullquote {
+  margin: 2em 0;
+  padding: 1.25em 0;
+  border-block: var(--bw-strong) solid var(--rule);
+}
+
+.pullquote blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.pullquote blockquote > p::before {
+  content: '“';
+}
+
+.pullquote blockquote > p::after {
+  content: '”';
+}
+
+.pullquote figcaption {
+  margin-block-start: 0.75em;
+}
+
+.section-break {
+  margin-block: 2.5em;
+  text-align: center;
+  letter-spacing: 0.6em;
+  padding-inline-start: 0.6em;
+  font-size: 0.9em;
+}
+
+.margin-note {
+  margin-block: 1.25em;
+  padding: 0.6rem 0.8rem;
+  border-inline-start: 3px solid var(--accent-bright);
+  background: color-mix(in srgb, var(--paper-raised) 60%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ink-muted);
+}
+
+@media (width >= 1240px) {
+  .post-grid .margin-note {
+    float: right;
+    clear: right;
+    inline-size: calc(2 * var(--col) + var(--gap));
+    margin-block: 0.25em 1em;
+    margin-inline: 1.5rem calc(-1 * (2 * var(--col) + 2 * var(--gap)));
+    border-inline-start-width: 2px;
+  }
+}
+
+/* ---------- Drop cap (opt-in: essays set data-dropcap) ---------- */
+
+.prose[data-dropcap] > p:first-of-type::first-letter {
+  float: inline-start;
+  margin: 0.08em 0.12em 0 0;
+  font-family: var(--font-mono);
+  font-size: 3.6em;
+  font-weight: 700;
+  line-height: 0.82;
+}
+
+/* ---------- Verse ---------- */
+
+.verse {
+  margin-block: 2em;
+  padding: 1.25em 1.5em;
+  border-inline-start: 3px solid var(--ink);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+.verse > p {
+  white-space: pre-line;
+}
+
+.verse > p + p {
+  margin-block-start: 1.5em;
+}
+
+/* ---------- Code blocks ---------- */
+
+.codeblock {
+  margin: 0;
+  border: var(--bw-strong) solid var(--rule);
+  background: var(--paper-sunken);
+  max-inline-size: 100%;
+}
+
+.codeblock-head {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  padding-inline-start: 0.9rem;
+  border-block-end: var(--bw) solid var(--rule);
+  background: var(--header-bg);
+  min-block-size: var(--touch);
+}
+
+.codeblock-head > .codeblock-title,
+.codeblock-head > .codeblock-lang {
+  align-self: center;
+  font-size: 0.75rem;
+}
+
+.codeblock-title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.codeblock-lang {
+  margin-inline-end: auto;
+}
+
+.codeblock-title:last-of-type {
+  margin-inline-end: auto;
+}
+
+.codeblock-head > :nth-child(2):not(.codeblock-lang) {
+  margin-inline-start: auto;
+}
+
+.codeblock-copy {
+  padding-inline: 0.9rem;
+  border-inline-start: var(--bw) solid var(--rule);
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+.codeblock-copy:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.codeblock pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  background: transparent !important;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  tab-size: 2;
+  color: var(--ink);
+}
+
+.codeblock pre code {
+  font-family: inherit;
+  white-space: pre;
+}
+
+.astro-code span {
+  color: var(--shiki-light);
+}
+
+:root[data-theme='night'] .astro-code span {
+  color: var(--shiki-dark);
+}
+
+/* ---------- Demo iframe ---------- */
+
+.demo {
+  margin: 0;
+  border: var(--bw-strong) solid var(--rule);
+}
+
+.demo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--header-bg);
+  border-block-end: var(--bw) solid var(--rule);
+}
+
+.demo iframe {
+  display: block;
+  inline-size: 100%;
+  border: 0;
+  background: var(--paper-raised);
+}
+
+/* ---------- Footnotes ---------- */
+
+.footnotes {
+  margin-block-start: 3em;
+  padding-block-start: 1em;
+  border-block-start: var(--bw-strong) solid var(--rule);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.footnotes h2 {
+  position: static;
+  clip: auto;
+  inline-size: auto;
+  block-size: auto;
+  margin: 0 0 0.75em;
+  padding: 0;
+  border: 0;
+  overflow: visible;
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+}
+
+.footnotes ol {
+  padding-inline-start: 2.25em;
+}
+
+.footnotes li + li {
+  margin-block-start: 0.6em;
+}
+
+.footnotes p {
+  display: inline;
+}
+
+[data-footnote-ref] {
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+  font-weight: 700;
+  padding-inline: 0.15em;
+  text-decoration: none;
+  vertical-align: super;
+  line-height: 0;
+}
+
+[data-footnote-backref] {
+  margin-inline-start: 0.4em;
+  text-decoration: none;
+  font-family: var(--font-mono);
+}
+
+/* ---------- KaTeX ---------- */
+
+.prose .katex-display {
+  margin: 1.5em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.5em;
+}
+
+.prose .katex {
+  font-size: 1.05em;
+}

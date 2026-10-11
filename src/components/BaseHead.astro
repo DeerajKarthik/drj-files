@@ -1,0 +1,107 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { config, themeColors } from '../config';
+import { absoluteUrl, canonicalFor, href } from '../utils/paths';
+import plex400 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2?url';
+import plex700 from '@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-700-normal.woff2?url';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  published?: Date;
+  updated?: Date;
+  canonicalUrl?: string;
+  jsonLd?: Record<string, unknown>[];
+  /** Load the KaTeX stylesheet (math posts only). */
+  math?: boolean;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = config.description,
+  image = '/og/default.png',
+  type = 'website',
+  published,
+  updated,
+  canonicalUrl,
+  jsonLd = [],
+  math = false,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} · ${config.siteName}` : config.siteName;
+const canonical = canonicalUrl ?? canonicalFor(Astro.url.pathname);
+const imageUrl = absoluteUrl(image);
+const initial = config.defaultTheme;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<meta name="author" content={config.author} />
+<meta name="generator" content={Astro.generator} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+<meta name="theme-color" content={themeColors[initial]} />
+
+<link rel="icon" href={href('/favicon.svg')} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+<link rel="sitemap" href={href('/sitemap-index.xml')} />
+<link rel="alternate" type="application/rss+xml" title={config.siteName} href={href('/rss.xml')} />
+
+<meta property="og:site_name" content={config.siteName} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={title ?? config.siteName} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+{published && <meta property="article:published_time" content={published.toISOString()} />}
+{updated && <meta property="article:modified_time" content={updated.toISOString()} />}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title ?? config.siteName} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+
+<link rel="preload" href={plex400} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={plex700} as="font" type="font/woff2" crossorigin />
+{math && <link rel="stylesheet" href={href('/katex/katex.min.css')} />}
+
+{jsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+
+<!-- Theme is applied before first paint to avoid a flash. Re-applied after each client-side navigation. -->
+<script
+  is:inline
+  define:vars={{ initial, follow: config.followSystemTheme, colors: themeColors }}
+>
+  (function () {
+    var root = document.documentElement;
+    function choose() {
+      var saved = null;
+      try { saved = localStorage.getItem('theme'); } catch (e) {}
+      if (saved === 'paper' || saved === 'night') return saved;
+      if (follow && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'night';
+      return initial;
+    }
+    function apply() {
+      var theme = choose();
+      root.classList.remove('no-js');
+      root.classList.add('js');
+      root.setAttribute('data-theme', theme);
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute('content', colors[theme]);
+    }
+    apply();
+    document.addEventListener('astro:after-swap', apply);
+  })();
+</script>
+
+{/* Analytics slot (privacy-friendly, cookie-less): set config.analytics, e.g. { src: 'https://plausible.io/js/script.js', domain: 'example.com' }. */}
+{config.analytics && <script defer data-domain={config.analytics.domain} src={config.analytics.src} />}
+
+<ClientRouter fallback="swap" />

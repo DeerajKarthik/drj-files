@@ -1,0 +1,20 @@
+---
+import { href } from '../../utils/paths';
+
+interface Props {
+  src?: string;
+  alt?: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+}
+const { src, alt = '', width = 800, height = 450, caption } = Astro.props;
+const url = src?.startsWith('/') ? href(src) : src;
+---
+
+<figure class="figure">
+  <div class="figure-frame">
+    {url ? <img src={url} alt={alt} width={width} height={height} loading="lazy" decoding="async" /> : <slot />}
+  </div>
+  {caption && <figcaption class="tag">{caption}</figcaption>}
+</figure>

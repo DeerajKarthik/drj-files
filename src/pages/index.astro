@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Emblem from '../components/Emblem.astro';
+import HeroBlueprint from '../components/HeroBlueprint.astro';
+import LatestRibbon from '../components/LatestRibbon.astro';
+import StatusStrip from '../components/StatusStrip.astro';
+import CardGrid from '../components/CardGrid.astro';
+import { config, sections, sectionKeys } from '../config';
+import { href } from '../utils/paths';
+import { getPosts, orderForGrid, postsInSection } from '../utils/posts';
+
+const posts = await getPosts();
+const elsewhere = [...config.socials, { label: 'Email', href: `mailto:${config.email}` }];
+---
+
+<BaseLayout page="home">
+  <section class="hero" aria-label="Introduction">
+    <div class="hero-emblem"><Emblem size={180} /></div>
+    <div class="hero-text">
+      <h1 class="hero-title">{config.siteName}</h1>
+      <p class="hero-tagline">{config.tagline}</p>
+    </div>
+    <div class="hero-art" aria-hidden="true"><HeroBlueprint /></div>
+  </section>
+
+  <LatestRibbon posts={posts} />
+  <StatusStrip />
+
+  <section aria-labelledby="all-posts">
+    <h2 id="all-posts" class="visually-hidden">All posts</h2>
+    <CardGrid posts={orderForGrid(posts)} label="All posts" />
+  </section>
+
+  <section class="browse" aria-labelledby="browse-heading">
+    <h2 id="browse-heading" class="label browse-label trim">Browse by section:</h2>
+    <ul class="browse-grid">
+      {
+        sectionKeys.map((key) => {
+          const count = postsInSection(posts, key).length;
+          return (
+            <li>
+              <a class="browse-cell" href={href(sections[key].href)}>
+                <span class="browse-name">{sections[key].label}</span>
+                <span class="browse-blurb">{sections[key].blurb}</span>
+                <span class="browse-foot tag">{count} {count === 1 ? 'POST' : 'POSTS'} <span class="arrow" aria-hidden="true">→</span></span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </section>
+
+  <section class="elsewhere" aria-labelledby="elsewhere-heading">
+    <h2 id="elsewhere-heading" class="label trim">Elsewhere:</h2>
+    <ul>
+      {elsewhere.map((l) => <li><a class="link" href={l.href} rel="me noopener">{l.label}</a></li>)}
+    </ul>
+  </section>
+</BaseLayout>

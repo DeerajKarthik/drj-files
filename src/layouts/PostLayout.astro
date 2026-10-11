@@ -1,0 +1,159 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Illustration from '../components/Illustration.astro';
+import Figure from '../components/mdx/Figure.astro';
+import TocRail, { type Heading } from '../components/TocRail.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import WhereToNext from '../components/WhereToNext.astro';
+import TagChip from '../components/TagChip.astro';
+import { config, sections } from '../config';
+import { absoluteUrl, href } from '../utils/paths';
+import {
+  formatDate,
+  isoDate,
+  postMinutes,
+  relatedPosts,
+  sectionNeighbours,
+  type Post,
+} from '../utils/posts';
+
+interface Props {
+  post: Post;
+  headings: Heading[];
+  allPosts: Post[];
+}
+const { post, headings, allPosts } = Astro.props;
+const { title, description, section, motif, tags, pubDate, updatedDate, cover, coverHover, coverAlt, coverCaption, canonicalUrl, math } = post.data;
+const meta = sections[section];
+const minutes = postMinutes(post);
+const { prev, next } = sectionNeighbours(allPosts, post);
+const related = relatedPosts(allPosts, post);
+
+const crumbs = [
+  { label: 'Writing', path: '/writing' },
+  { label: meta.label, path: meta.href },
+  { label: title },
+];
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    datePublished: pubDate.toISOString(),
+    dateModified: (updatedDate ?? pubDate).toISOString(),
+    author: { '@type': 'Person', name: config.author },
+    url: absoluteUrl(`/writing/${post.id}`),
+    mainEntityOfPage: absoluteUrl(`/writing/${post.id}`),
+    image: absoluteUrl(`/og/${post.id}.png`),
+    keywords: tags.join(', '),
+    articleSection: meta.label,
+    inLanguage: config.locale,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((c, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: c.label,
+      item: absoluteUrl(c.path ?? `/writing/${post.id}`),
+    })),
+  },
+];
+const mailto = `mailto:${config.email}?subject=${encodeURIComponent(`Feedback: ${title}`)}`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  image={`/og/${post.id}.png`}
+  type="article"
+  published={pubDate}
+  updated={updatedDate}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+  math={math}
+  page="post"
+>
+  <ReadingProgress />
+  <Breadcrumbs items={crumbs} />
+
+  <article data-article>
+    <header class="post-head">
+      <div class="post-head-art">
+        <Illustration motif={motif} section={section} seed={post.id} cover={cover} coverHover={coverHover} alt={coverAlt} eager />
+      </div>
+      <div class="post-head-body">
+        <h1 class="post-title">{title}</h1>
+        <p class="post-desc">{description}</p>
+        <dl class="meta-grid">
+          <div class="meta-cell">
+            <dt class="label trim">Published</dt>
+            <dd><time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time></dd>
+          </div>
+          {
+            updatedDate && (
+              <div class="meta-cell">
+                <dt class="label trim">Updated</dt>
+                <dd><time datetime={isoDate(updatedDate)}>{formatDate(updatedDate)}</time></dd>
+              </div>
+            )
+          }
+          <div class="meta-cell">
+            <dt class="label trim">Reading time</dt>
+            <dd>{minutes} min</dd>
+          </div>
+          <div class="meta-cell">
+            <dt class="label trim">Section</dt>
+            <dd><a class="link" href={href(meta.href)}>{meta.tag}</a></dd>
+          </div>
+          {
+            tags.length > 0 && (
+              <div class="meta-cell meta-tags">
+                <dt class="label trim">Tags</dt>
+                <dd>{tags.map((tag) => <TagChip tag={tag} />)}</dd>
+              </div>
+            )
+          }
+        </dl>
+      </div>
+    </header>
+
+    {
+      cover && (
+        <div class="cover-figure">
+          <Figure src={cover} alt={coverAlt ?? ''} width={1200} height={630} caption={coverCaption} />
+        </div>
+      )
+    }
+
+    <div class="post-grid">
+      <TocRail headings={headings} />
+      <div class="prose" data-dropcap={section === 'creative' ? '' : undefined}>
+        <slot />
+      </div>
+    </div>
+  </article>
+
+  <section class="feedback" aria-label="Feedback">
+    <h2 class="label trim">Feedback:</h2>
+    <p>Spotted a mistake or want to argue? <a class="link" href={mailto}>Email me about “{title}”</a>.</p>
+  </section>
+
+  <WhereToNext current={post} prev={prev} next={next} related={related} />
+
+  <section class="share" aria-label="Share">
+    <h2 class="label trim">Share:</h2>
+    <button class="cell-btn share-btn js-only" type="button" data-copy-url>
+      <span class="label trim" data-copy-label>Copy link</span>
+      <span class="visually-hidden" role="status" aria-live="polite" data-copy-status></span>
+    </button>
+    <a class="link" href={href('/rss.xml')}>RSS</a>
+  </section>
+</BaseLayout>
+
+<script>
+  import '../scripts/copy';
+</script>

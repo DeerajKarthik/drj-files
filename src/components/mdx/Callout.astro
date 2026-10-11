@@ -1,0 +1,13 @@
+---
+interface Props {
+  type?: 'note' | 'warning' | 'idea';
+  title?: string;
+}
+const { type = 'note', title } = Astro.props;
+const names = { note: 'Note', warning: 'Warning', idea: 'Idea' } as const;
+---
+
+<aside class={`admonition admonition-${type}`}>
+  <p class="admonition-label label trim">{title ?? names[type]}</p>
+  <div class="admonition-body"><slot /></div>
+</aside>

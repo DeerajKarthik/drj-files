@@ -1,0 +1,16 @@
+---
+import { config } from '../config';
+import { href } from '../utils/paths';
+import Doodle from './Doodle.astro';
+
+const { strip } = config;
+---
+
+<section class="strip" aria-label="Currently">
+  <Doodle />
+  <h2 class="label strip-label trim">{strip.label}</h2>
+  <p class="strip-text trim">
+    {strip.href ? <a class="strip-link" href={href(strip.href)}>{strip.text}</a> : strip.text}
+  </p>
+  <p class="strip-ticker" aria-hidden="true"><span>{'> notebook open. pencils sharpened.'}</span></p>
+</section>

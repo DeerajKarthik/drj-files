@@ -1,0 +1,60 @@
+---
+import { sections } from '../config';
+import { href } from '../utils/paths';
+import { postHref, type Post } from '../utils/posts';
+
+interface Props {
+  current: Post;
+  prev?: Post | undefined;
+  next?: Post | undefined;
+  related: Post[];
+}
+const { current, prev, next, related } = Astro.props;
+const section = sections[current.data.section];
+---
+
+<section class="next" aria-labelledby="next-heading">
+  <h2 id="next-heading" class="label next-label trim">Where to next?</h2>
+  <div class="next-body">
+    <div class="tree">
+      <p class="tree-root"><a class="link" href={href('/writing')}>Writing</a> / <a class="link" href={href(section.href)}>{section.label}</a></p>
+      <ul>
+        {
+          prev && (
+            <li>
+              <a class="link" href={postHref(prev)}><span aria-hidden="true">← </span>{prev.data.title}</a>
+              <span class="tag">Earlier</span>
+            </li>
+          )
+        }
+        <li class="tree-current" aria-current="page">
+          <span><span aria-hidden="true">▶ </span>{current.data.title}</span>
+          <span class="here label">You are here</span>
+        </li>
+        {
+          next && (
+            <li>
+              <a class="link" href={postHref(next)}>{next.data.title}<span aria-hidden="true"> →</span></a>
+              <span class="tag">Later</span>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+    {
+      related.length > 0 && (
+        <div class="tree">
+          <p class="tree-root">Related by tag</p>
+          <ul>
+            {related.map((post) => (
+              <li>
+                <a class="link" href={postHref(post)}>{post.data.title}</a>
+                <span class="tag">{sections[post.data.section].tag}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>
