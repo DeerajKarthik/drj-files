@@ -75,7 +75,7 @@ If your unlearning evaluation checks only the language of the forget request, yo
 
 ## Even with the right set, steps do not transfer
 
-Suppose we found $Z_f$ perfectly. We still have to change the weights, and now a second geometric problem appears. The gradient of the log probability of the fact in language $\ell$ is $g_\ell$. A step $\Delta$ changes that log probability by about $g_\ell^{\top}\Delta$. I wrote about the first order version of this in an earlier post, where an English-only step helps Hindi exactly as much as the two gradients lean the same way.
+Suppose we found $Z_f$ perfectly. We still have to change the weights, and now a second geometric problem appears. The gradient of the log probability of the fact in language $\ell$ is $g_\ell$. A step $\Delta$ changes that log probability by about $g_\ell^{\top}\Delta$. To first order, an English-only step helps Hindi exactly as much as the two gradients lean the same way, because the Hindi log probability moves by $-\eta\, g_{\text{hi}}^{\top} g_{\text{en}}$.
 
 Here I want to add the thing that post left out, which is the price. Forcing every language to forget by the same amount $c$ means solving
 
@@ -85,7 +85,7 @@ G^{\top}\Delta = -c\,\mathbf{1},
 G = [\,g_1 \;\; \cdots \;\; g_L\,].
 $$
 
-There are infinitely many solutions, and last time I picked the shortest one in ordinary distance. Ordinary distance in weight space is a poor measure of damage, because some directions barely matter to the model and some directions break it. A better ruler is the Fisher information matrix $F$ of the data we want to keep, since $\tfrac12\Delta^{\top}F\Delta$ approximates how far the model's outputs on that data move, in KL divergence. So we ask for the cheapest step in that ruler,
+There are infinitely many solutions, and the obvious pick is the shortest one in ordinary distance. Ordinary distance in weight space is a poor measure of damage, because some directions barely matter to the model and some directions break it. A better ruler is the Fisher information matrix $F$ of the data we want to keep, since $\tfrac12\Delta^{\top}F\Delta$ approximates how far the model's outputs on that data move, in KL divergence. So we ask for the cheapest step in that ruler,
 
 $$
 \min_{\Delta}\; \tfrac12\,\Delta^{\top}F\Delta

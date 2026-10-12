@@ -19,8 +19,8 @@ export const config = {
   followSystemTheme: true,
   strip: {
     label: 'CURRENTLY:',
-    text: 'Writing up notes on certified machine unlearning',
-    href: '/writing/unlearning-guarantees',
+    text: 'Writing up notes on multilingual machine unlearning',
+    href: '/writing/multilingual-unlearning-position',
   },
   nav: [
     { label: 'Research', href: '/research' },
